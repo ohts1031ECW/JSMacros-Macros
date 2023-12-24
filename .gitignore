@@ -1,0 +1,5 @@
+#除外ファイルたち
+node_modules/
+bat/
+backup/
+pnpm-lock.yaml
