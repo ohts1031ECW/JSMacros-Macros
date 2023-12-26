@@ -1,4 +1,4 @@
-const {ToggleScript}= require("../ohts-Lib.js")
+const {ToggleScript}= require("../lib/ohts-Lib.js")
 
 //togglescript
 

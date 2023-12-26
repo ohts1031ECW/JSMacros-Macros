@@ -1,5 +1,5 @@
 // @ts-nocheck
-const { ToggleScript, getTargetedBlock } = require("../ohts-Lib");
+const { ToggleScript, getTargetedBlock } = require("../lib/ohts-Lib");
 
 ToggleScript("endstone on dirt",async()=>{
     Client.waitTick(1)
