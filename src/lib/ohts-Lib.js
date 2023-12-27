@@ -3,7 +3,7 @@
  * @param {string} ScriptName
  * @param {() => void} callback
  * @param {{ 
- * script: {bracket: number,name:number}; togglemsg: {enable:number,disenable:number}; } | undefined} color
+ * script: {bracket: number,name:number}} | undefined} color
  */
 function ToggleScript(ScriptName, callback,color) {
     if(color === undefined){
@@ -12,13 +12,9 @@ function ToggleScript(ScriptName, callback,color) {
                 bracket: 0x7,
                 name: 0x5
             },
-            togglemsg: {
-                enable: 0x00ff00,
-                disenable: 0xc,
-            }
         }
     }
-    color.script.bracket
+
 
 
     const reverse = !GlobalVars.getBoolean(ScriptName);
@@ -26,12 +22,12 @@ function ToggleScript(ScriptName, callback,color) {
     if (reverse) {
         Chat.log(Chat.createTextBuilder().append("[").withColor(color.script.bracket)
             .append(ScriptName).withColor(color.script.name)
-            .append("]").withColor(color.script.bracket).append(" enabled").withColor(color.togglemsg.enable)
+            .append("]").withColor(color.script.bracket).append(" enabled").withColor(0,255,0)
             .build());
     } else {
         Chat.log(Chat.createTextBuilder().append("[").withColor(color.script.bracket)
             .append(ScriptName).withColor(color.script.name)
-            .append("]").withColor(color.script.bracket).append(" disabled").withColor(color.togglemsg.disenable)
+            .append("]").withColor(color.script.bracket).append(" disabled").withColor(0xc)
             .build());
     }
     while (GlobalVars.getBoolean(ScriptName)) {
