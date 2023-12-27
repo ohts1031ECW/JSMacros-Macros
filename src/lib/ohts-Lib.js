@@ -1,25 +1,37 @@
-//@ts-nocheck
+
 /**
  * @param {string} ScriptName
  * @param {() => void} callback
+ * @param {{ 
+ * script: {bracket: number,name:number}; togglemsg: {enable:number,disenable:number}; } | undefined} color
  */
-function ToggleScript(ScriptName, callback) {
-
-    const color = {
-        bracket: 0x7,
-        string: 0x5
+function ToggleScript(ScriptName, callback,color) {
+    if(color === undefined){
+        color = {
+            script: {
+                bracket: 0x7,
+                name: 0x5
+            },
+            togglemsg: {
+                enable: 0x00ff00,
+                disenable: 0xc,
+            }
+        }
     }
+    color.script.bracket
+
+
     const reverse = !GlobalVars.getBoolean(ScriptName);
     GlobalVars.putBoolean(ScriptName, reverse);
     if (reverse) {
-        Chat.log(Chat.createTextBuilder().append("[").withColor(color.bracket)
-            .append(ScriptName).withColor(color.string)
-            .append("]").withColor(color.bracket).append(" enabled").withColor(0xc)
+        Chat.log(Chat.createTextBuilder().append("[").withColor(color.script.bracket)
+            .append(ScriptName).withColor(color.script.name)
+            .append("]").withColor(color.script.bracket).append(" enabled").withColor(color.togglemsg.enable)
             .build());
     } else {
-        Chat.log(Chat.createTextBuilder().append("[").withColor(color.bracket)
-            .append(ScriptName).withColor(color.string)
-            .append("]").withColor(color.bracket).append(" disabled").withColor(0xc)
+        Chat.log(Chat.createTextBuilder().append("[").withColor(color.script.bracket)
+            .append(ScriptName).withColor(color.script.name)
+            .append("]").withColor(color.script.bracket).append(" disabled").withColor(color.togglemsg.disenable)
             .build());
     }
     while (GlobalVars.getBoolean(ScriptName)) {
@@ -40,11 +52,12 @@ function getTargetedBlock(){
 //ブロックのstateを取得しJSONに整形しreturnする関数
 function GetBlockState(){
     if(getTargetedBlock()){
-        const keys = getTargetedBlock().getBlockState().keySet().toArray();
-        const values = getTargetedBlock().getBlockState().values().toArray();
+        const keys = getTargetedBlock()?.getBlockState().keySet().toArray();
+        const values = getTargetedBlock()?.getBlockState().values().toArray();
         
         let obj = {};
         for(const valueindex in values){
+            //@ts-ignore
             obj[keys[valueindex]] = values[valueindex]
         }
         return obj;
