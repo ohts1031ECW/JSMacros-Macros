@@ -15,7 +15,7 @@ ToggleScript("inventoryinfo-dev", async () => {
         const Screen = Hud.getOpenScreen();///とりあえず仮で中に何が入ってるか
         const ScreenName = Hud.getOpenScreenName();
 
-        Chat.log(`ScreenName: ${ScreenName}`)
+        //Chat.log(`ScreenName: ${ScreenName}`)
 
         let container_hight;
         if (ScreenName === "3 Row Chest" || ScreenName === "Shulker Box") {
@@ -51,13 +51,23 @@ ToggleScript("inventoryinfo-dev", async () => {
             }
         }
 
-
+        //シュルカーのNBTから中に入ってるアイテムを取得
+        const shulkerNBT = playerinv.getSlot(0).getNBT().get("BlockEntityTag").get("Items").asListHelper();
+        
+        for(let count = 0; count<=shulkerNBT.length();count++){
+            const ItemNBTData = shulkerNBT.get(count).asCompoundHelper()
+            Chat.log(`count: ${ItemNBTData.get("Count").asString()}  Slot:${ItemNBTData.get("Slot").asString()}   id:${ItemNBTData.get("id").asString()}`)
+        }
+        
         //コンテナ内のアイテムの変化時の処理
-        JsMacros.on("ClickSlot",JavaWrapper.methodToJava(()=>{
-            Chat.log("click slot event")
+        JsMacros.once("ClickSlot",JavaWrapper.methodToJava(()=>{
+
+            //スクリーンのすべてのelementを取得し削除
             for(const element of Screen.getElements().toArray()){
                 Screen.removeElement(element)
             }
+
+            //再描画
             ItemPlot(X,Y);
         }))
     }
