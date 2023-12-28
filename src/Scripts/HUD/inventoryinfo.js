@@ -1,26 +1,64 @@
+// @ts-nocheck
 const { ToggleScript } = require("../../lib/ohts-Lib");
 
-ToggleScript("inventoryinfo-dev",async()=>{
+ToggleScript("inventoryinfo-dev", async () => {
     //Iscreen
-    const X = 100;
-    const Y = 100;
-    
+    const X = 0;
+    const Y = 0;
+
     Client.waitTick(10);
-    if(Hud.isContainer() === true){
+    if (Hud.isContainer() === true) {
+
         //アイテム取得
-        //const contained_Item = Player.openInventory().getItems();
+        const playerinv = Player.openInventory()
 
         const Screen = Hud.getOpenScreen();///とりあえず仮で中に何が入ってるか
         const ScreenName = Hud.getOpenScreenName();
 
-        Chat.log(`ScreenName: ${ScreenName}`);
+        Chat.log(`ScreenName: ${ScreenName}`)
 
-        //note white = 0xffffff
-        //Chat.log(`get title text: ${Screen?.getTitleText()}`);
-        //Screen?.textFieldBuilder().createWidget().setText("TEEEEEEEEEEEEExt").setActive(true)//.setPos(100,100);
-        Screen?.addText("めっちゃ明るくなったわ",X,Y,0xffffff,true);
-        //アイテム取得どうしましょ
+        let container_hight;
+        if (ScreenName === "3 Row Chest" || ScreenName === "Shulker Box") {
+            container_hight = 3;
+        } else if (ScreenName === "6 Row Chest") {
+            container_hight = 6
+        }
+        ItemPlot(X, Y);
 
-    
+
+        //アイテム配置
+        function ItemPlot(X, Y) {
+            for (let countY = 0; countY < container_hight; countY++) {
+                for (let countX = 0; countX <= 8; countX++) {
+                    const Slot = countX + countY * 9
+                    const Itemdata = playerinv.getSlot(Slot);
+
+
+                    /*
+                    Chat.log(`countX: ${countX + 1} countY: ${countY} Slot:${Slot}`);
+                    Chat.log(Itemdata.getItemId())
+                    Chat.log(Itemdata.getCount())
+                    */
+
+                    //アイテム配置
+                    Screen?.addItem(X + 15 + (15 * countX), Y + 15 + (25 * countY), Itemdata.getItemId());
+
+                    //アイテムに重ねてアイテムの個数表示(1の場合は表示なし)
+                    if (Itemdata.getCount() > 1) {
+                        Screen.addText(Itemdata.getCount().toString(), X + 15 + (15 * countX), Y + 12 + (25 * countY), 0xffffff, true).setScale(0.65);
+                    }
+                }
+            }
+        }
+
+
+        //コンテナ内のアイテムの変化時の処理
+        JsMacros.on("ClickSlot",JavaWrapper.methodToJava(()=>{
+            Chat.log("click slot event")
+            for(const element of Screen.getElements().toArray()){
+                Screen.removeElement(element)
+            }
+            ItemPlot(X,Y);
+        }))
     }
 })
