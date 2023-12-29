@@ -2,11 +2,9 @@
 const { ToggleScript } = require("../../lib/ohts-Lib");
 
 ToggleScript("inventoryinfo-dev", async () => {
-    //Iscreen
-    const X = 0;
-    const Y = 0;
 
-    Client.waitTick(10);
+
+    Client.waitTick(1);
     if (Hud.isContainer() === true) {
 
         //アイテム取得
@@ -15,6 +13,21 @@ ToggleScript("inventoryinfo-dev", async () => {
         const Screen = Hud.getOpenScreen();///とりあえず仮で中に何が入ってるか
         const ScreenName = Hud.getOpenScreenName();
 
+        //Iscreen
+        const coords = {
+            chest: {
+                X: Math.round(Screen.getWidth() / 2) - 75,
+                Y: 10
+            },
+            shulker_left: {
+                X: 5,
+                Y: 5,
+            },
+            shulker_right: {
+                X: 700,
+                Y: 5
+            }
+        }
         //Chat.log(`ScreenName: ${ScreenName}`)
 
         let container_hight;
@@ -23,52 +36,78 @@ ToggleScript("inventoryinfo-dev", async () => {
         } else if (ScreenName === "6 Row Chest") {
             container_hight = 6
         }
-        ItemPlot(X, Y);
+        ItemPlot(coords);
 
 
         //アイテム配置
-        function ItemPlot(X, Y) {
+        function ItemPlot(coords) {
+            //シュルカーボックス個数カウント
+            let shulkercount = 0;
             for (let countY = 0; countY < container_hight; countY++) {
                 for (let countX = 0; countX <= 8; countX++) {
                     const Slot = countX + countY * 9
                     const Itemdata = playerinv.getSlot(Slot);
 
-
-                    /*
-                    Chat.log(`countX: ${countX + 1} countY: ${countY} Slot:${Slot}`);
-                    Chat.log(Itemdata.getItemId())
-                    Chat.log(Itemdata.getCount())
-                    */
-
                     //アイテム配置
-                    Screen?.addItem(X + 15 + (15 * countX), Y + 15 + (25 * countY), Itemdata.getItemId());
+                    Screen?.addItem(coords.chest.X + (15 * countX), coords.chest.Y + 10 + (23 * countY), Itemdata.getItemId());
 
                     //アイテムに重ねてアイテムの個数表示(1の場合は表示なし)
                     if (Itemdata.getCount() > 1) {
-                        Screen.addText(Itemdata.getCount().toString(), X + 15 + (15 * countX), Y + 12 + (25 * countY), 0xffffff, true).setScale(0.65);
+                        Screen.addText(Itemdata.getCount().toString(), coords.chest.X + (15 * countX), coords.chest.Y + 8 + (23 * countY), 0xffffff, true).setScale(0.65);
+                    }
+
+
+                    //シュルカーボックスなら
+
+                    if (playerinv.getSlot(Slot).getItemId() === "minecraft:shulker_box") {
+
+
+                        //シュルカーのNBTから中に入ってるアイテムを取得
+                        const shulkerNBT = playerinv.getSlot(Slot).getNBT().get("BlockEntityTag").get("Items").asListHelper();
+                        //const shulkerNBT = playerinv.getSlot(Slot).getNBT().get("BlockEntityTag").get("Items").asListHelper();
+
+
+                        for (let count = 0; count < shulkerNBT.length(); count++) {
+                            const ItemNBTData = shulkerNBT.get(count).asCompoundHelper();
+                            /*
+                            Chat.log(`countX: ${countX}`);
+                            Chat.log(`countY: ${countY}`);
+                            Chat.log(`count: ${count}`);
+                            Chat.log(`shulkercount: ${shulkercount}`)
+                            Chat.log(`count: ${ItemNBTData.get("Count").asString()}  Slot:${ItemNBTData.get("Slot").asString()}   id:${ItemNBTData.get("id").asString()}`)
+                            */
+
+                            const ItemCount = ItemNBTData.get("Count").asString().replace(/b/g, "");
+                            if (count <= 8) {
+                                Screen.addText(ItemCount, coords.shulker_left.X + (15 * count) - 1, coords.shulker_left.Y + (shulkercount * 75) - 1, 0xffffff, false).setScale(0.6);//アイテムの個数追加
+                                Screen.addItem(coords.shulker_left.X + (15 * count), coords.shulker_left.Y + (shulkercount * 75) + 5, ItemNBTData.get("id").asString());//アイテム追加
+                            } else if (count >= 9 && count <= 17) {
+                                Screen.addText(ItemCount, coords.shulker_left.X + (15 * (count - 9)) - 1, coords.shulker_left.Y + (shulkercount * 75) - 1 + 24, 0xffffff, false).setScale(0.6);//アイテムの個数追加
+                                Screen.addItem(coords.shulker_left.X + (15 * (count - 9)), coords.shulker_left.Y + (shulkercount * 75) +5+ 24, ItemNBTData.get("id").asString());//アイテム追加
+                            } else {
+                                Screen.addText(ItemCount, coords.shulker_left.X + (15 * (count - 18)) - 1, coords.shulker_left.Y + (shulkercount * 75) - 1 + 48, 0xffffff, false).setScale(0.6);//アイテムの個数追加
+                                Screen.addItem(coords.shulker_left.X + (15 * (count - 18)), coords.shulker_left.Y + (shulkercount * 75) +5+ 48, ItemNBTData.get("id").asString());//アイテム追加
+                            }
+                        }
+                        //枠描画
+                        //Screen.addLine(coords.shulker_left.X, coords.shulker_left.Y, coords.shulker_left.X + 120, shulker_left.Y, 0xffffff);
+
+                        shulkercount++
                     }
                 }
             }
         }
 
-        //シュルカーのNBTから中に入ってるアイテムを取得
-        const shulkerNBT = playerinv.getSlot(0).getNBT().get("BlockEntityTag").get("Items").asListHelper();
-        
-        for(let count = 0; count<=shulkerNBT.length();count++){
-            const ItemNBTData = shulkerNBT.get(count).asCompoundHelper()
-            Chat.log(`count: ${ItemNBTData.get("Count").asString()}  Slot:${ItemNBTData.get("Slot").asString()}   id:${ItemNBTData.get("id").asString()}`)
-        }
-        
         //コンテナ内のアイテムの変化時の処理
-        JsMacros.once("ClickSlot",JavaWrapper.methodToJava(()=>{
+        JsMacros.once("ClickSlot", JavaWrapper.methodToJava(() => {
 
             //スクリーンのすべてのelementを取得し削除
-            for(const element of Screen.getElements().toArray()){
+            for (const element of Screen.getElements().toArray()) {
                 Screen.removeElement(element)
             }
 
             //再描画
-            ItemPlot(X,Y);
+            ItemPlot(coords);
         }))
     }
 })
