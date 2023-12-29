@@ -43,6 +43,7 @@ ToggleScript("inventoryinfo-dev", async () => {
         function ItemPlot(coords) {
             //シュルカーボックス個数カウント
             let shulkercount = 0;
+            let Lines = 0;//描画の列カウント
             for (let countY = 0; countY < container_hight; countY++) {
                 for (let countX = 0; countX <= 8; countX++) {
                     const Slot = countX + countY * 9
@@ -67,31 +68,30 @@ ToggleScript("inventoryinfo-dev", async () => {
                         //const shulkerNBT = playerinv.getSlot(Slot).getNBT().get("BlockEntityTag").get("Items").asListHelper();
 
 
+
+
                         for (let count = 0; count < shulkerNBT.length(); count++) {
                             const ItemNBTData = shulkerNBT.get(count).asCompoundHelper();
-                            /*
-                            Chat.log(`countX: ${countX}`);
-                            Chat.log(`countY: ${countY}`);
-                            Chat.log(`count: ${count}`);
-                            Chat.log(`shulkercount: ${shulkercount}`)
-                            Chat.log(`count: ${ItemNBTData.get("Count").asString()}  Slot:${ItemNBTData.get("Slot").asString()}   id:${ItemNBTData.get("id").asString()}`)
-                            */
 
                             const ItemCount = ItemNBTData.get("Count").asString().replace(/b/g, "");
                             if (count <= 8) {
-                                Screen.addText(ItemCount, coords.shulker_left.X + (15 * count) - 1, coords.shulker_left.Y + (shulkercount * 75) - 1, 0xffffff, false).setScale(0.6);//アイテムの個数追加
-                                Screen.addItem(coords.shulker_left.X + (15 * count), coords.shulker_left.Y + (shulkercount * 75) + 5, ItemNBTData.get("id").asString());//アイテム追加
+                                Screen.addText(ItemCount, coords.shulker_left.X + (120 * Lines) + (15 * count) - 1, coords.shulker_left.Y + (shulkercount * 75) - 1, 0xffffff, false).setScale(0.6);//アイテムの個数追加
+                                Screen.addItem(coords.shulker_left.X + (120 * Lines) + (15 * count), coords.shulker_left.Y + (shulkercount * 75) + 5, ItemNBTData.get("id").asString());//アイテム追加
                             } else if (count >= 9 && count <= 17) {
-                                Screen.addText(ItemCount, coords.shulker_left.X + (15 * (count - 9)) - 1, coords.shulker_left.Y + (shulkercount * 75) - 1 + 24, 0xffffff, false).setScale(0.6);//アイテムの個数追加
-                                Screen.addItem(coords.shulker_left.X + (15 * (count - 9)), coords.shulker_left.Y + (shulkercount * 75) +5+ 24, ItemNBTData.get("id").asString());//アイテム追加
+                                Screen.addText(ItemCount, coords.shulker_left.X + (120 * Lines) + (15 * (count - 9)) - 1, coords.shulker_left.Y + (shulkercount * 75) - 1 + 24, 0xffffff, false).setScale(0.6);//アイテムの個数追加
+                                Screen.addItem(coords.shulker_left.X + (120 * Lines) + (15 * (count - 9)), coords.shulker_left.Y + (shulkercount * 75) + 5 + 24, ItemNBTData.get("id").asString());//アイテム追加
                             } else {
-                                Screen.addText(ItemCount, coords.shulker_left.X + (15 * (count - 18)) - 1, coords.shulker_left.Y + (shulkercount * 75) - 1 + 48, 0xffffff, false).setScale(0.6);//アイテムの個数追加
-                                Screen.addItem(coords.shulker_left.X + (15 * (count - 18)), coords.shulker_left.Y + (shulkercount * 75) +5+ 48, ItemNBTData.get("id").asString());//アイテム追加
+                                Screen.addText(ItemCount, coords.shulker_left.X + (120 * Lines) + (15 * (count - 18)) - 1, coords.shulker_left.Y + (shulkercount * 75) - 1 + 48, 0xffffff, false).setScale(0.6);//アイテムの個数追加
+                                Screen.addItem(coords.shulker_left.X + (120 * Lines) + (15 * (count - 18)), coords.shulker_left.Y + (shulkercount * 75) + 5 + 48, ItemNBTData.get("id").asString());//アイテム追加
                             }
                         }
                         //枠描画
                         //Screen.addLine(coords.shulker_left.X, coords.shulker_left.Y, coords.shulker_left.X + 120, shulker_left.Y, 0xffffff);
-
+                        if (shulkercount % 8 === 0) {
+                            Chat.log(shulkercount)
+                            Chat.log("Lines")
+                            Lines++
+                        }
                         shulkercount++
                     }
                 }
