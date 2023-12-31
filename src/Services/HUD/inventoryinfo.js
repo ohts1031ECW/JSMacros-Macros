@@ -22,7 +22,8 @@ const coords = {
         Y: -2
     }
 }
-const ItemcountTextColor = 0xffffff;//16進数カラーコードで指定 カラーコード頭の#は0xに置き換えてください
+const ItemcountTextColor = 0xffffff;//16進数カラーコードで指定 カラーコード頭の#は0xに置き換えてください デフォルトは0xffffff の白です
+const ItemCountScale = 0.65 //アイテム個数表示の文字の大きさを指定します デフォルトは0.65です
 //ここまで
 
 //引数 (coords)
@@ -47,7 +48,12 @@ function Container_Update(coords) {
     //アイテム描画
     for (let countY = 0; countY < container_hight; countY++) {
         for (let countX = 0; countX < 9; countX++) {
-            const SlotNumber = countX + countY * 9;
+            /*
+            countX チェストの行で0~8の9スロット
+            countY チェストの列で0~2 0~5までの3,6スロット
+            足してx9でスロット番号0~26と0~53を生成する
+            */
+            const SlotNumber = countX + countY * 9;//チェストのスロット番号生成
             const ItemData = Inventory.getSlot(SlotNumber);
 
             //アイテム配置用のXY座標
@@ -59,25 +65,69 @@ function Container_Update(coords) {
 
             //アイテム数が1より上の時に数値を配置
             if (ItemData.getCount() > 1) {
-                Screen.addText(ItemData.getCount().toString(), ItemX + coords.Itemcount.X, ItemY + coords.Itemcount.Y, ItemcountTextColor, false).setScale(0.65);
+                Screen.addText(ItemData.getCount().toString(), ItemX + coords.Itemcount.X, ItemY + coords.Itemcount.Y, ItemcountTextColor, false).setScale(ItemCountScale);
             }
 
 
+            //チェストの中にあるシュルカーの数数え用
+            let Shulker_Count = 0;
             //シュルカーの中に入ってるアイテムを取得し表示する
             //シュルカーボックスなら
-            if(ItemData.getItemId() === "minecraft:shulker_box"){
+            if (ItemData.getItemId() === "minecraft:shulker_box") {
+                Shulker_Count++
 
                 //シュルカーボックスのNBTを取得
                 const shulker_NBT = Inventory.getSlot(SlotNumber).getNBT().get("BlockEntityTag").get("Items").asListHelper()
-                Chat.log(shulker_NBT)
+
+                //シュルカーの数を7で割った余りが0にならない吐息
+                if (Shulker_Count % 7 !== 0) {
+
+                    //チェストの中のアイテムと同様に
+                    for (let shulker_Y = 0; shulker_Y < 3; shulker_Y++) {
+                        for (let shulker_X = 0; shulker_X < 9; shulker_X++) {
+                            const Shulker_Slot_Number = shulker_X + shulker_Y * 9;//スロット番号生成
+
+                            const Shulker_Item_Data = shulker_NBT.get(Shulker_Slot_Number).asCompoundHelper();
+
+                            const Shulker_Item_Count = Shulker_Item_Data.get("Count").asString().replace(/b/g, "");
+                            const Shulker_Item_Id = Shulker_Item_Data.get("id").asString();
+
+                            const Shulker_Item_X = coords.shulker_left.X + ItemXdistance * shulker_X;
+                            const Shulker_Item_Y = coords.shulker_left.Y + ItemYdistance * shulker_Y;
+
+                            //アイテム描画
+                            Screen.addItem(Shulker_Item_X, Shulker_Item_Y, Shulker_Item_Id);
+
+                            //アイテムの数が1こより多ければアイテムの個数を表示
+                            if (Shulker_Item_Count > 1) {
+                                Screen.addText(Shulker_Item_Count, coords.Itemcount.X + Shulker_Item_X, coords.Itemcount.Y + Shulker_Item_Y, ItemcountTextColor, false).setScale(ItemCountScale);
+                            }
+                        }
+                    }
+                } else {
+
+                    
+                }
+
+                //shulkercount÷6の余りが0のとき, (0~6で7)
+                //if(shulker_count % 6 === 0){
+
+
+                //それ以外(通常時)
+                //} else {
+
+                //Chat.log(`shulkercount /3 :${shulker_NBT.length() / 3}`)
+                //}
+
+
             }
         }
     }
 }
 
 //エレメント消去
-function DeleteAllElement(){
-    for(const Element of Hud.getOpenScreen().getElements().toArray()){
+function DeleteAllElement() {
+    for (const Element of Hud.getOpenScreen().getElements().toArray()) {
         Hud.getOpenScreen().removeElement(Element)
     }
 }
