@@ -1,113 +1,103 @@
-// @ts-nocheck
-const { ToggleScript } = require("../../lib/ohts-Lib");
-
-ToggleScript("inventoryinfo-dev", async () => {
+//@ts-nocheck
 
 
-    Client.waitTick(1);
-    if (Hud.isContainer() === true) {
-
-        //アイテム取得
-        const playerinv = Player.openInventory()
-
-        const Screen = Hud.getOpenScreen();///とりあえず仮で中に何が入ってるか
-        const ScreenName = Hud.getOpenScreenName();
-
-        //Iscreen
-        const coords = {
-            chest: {
-                X: Math.round(Screen.getWidth() / 2) - 75,
-                Y: 10
-            },
-            shulker_left: {
-                X: 5,
-                Y: 5,
-            },
-            shulker_right: {
-                X: 700,
-                Y: 5
-            }
-        }
-        //Chat.log(`ScreenName: ${ScreenName}`)
-
-        let container_hight;
-        if (ScreenName === "3 Row Chest" || ScreenName === "Shulker Box") {
-            container_hight = 3;
-        } else if (ScreenName === "6 Row Chest") {
-            container_hight = 6
-        }
-        ItemPlot(coords);
-
-
-        //アイテム配置
-        function ItemPlot(coords) {
-            //シュルカーボックス個数カウント
-            let shulkercount = 0;
-            let Lines = 0;//描画の列カウント
-            for (let countY = 0; countY < container_hight; countY++) {
-                for (let countX = 0; countX <= 8; countX++) {
-                    const Slot = countX + countY * 9
-                    const Itemdata = playerinv.getSlot(Slot);
-
-                    //アイテム配置
-                    Screen?.addItem(coords.chest.X + (15 * countX), coords.chest.Y + 10 + (23 * countY), Itemdata.getItemId());
-
-                    //アイテムに重ねてアイテムの個数表示(1の場合は表示なし)
-                    if (Itemdata.getCount() > 1) {
-                        Screen.addText(Itemdata.getCount().toString(), coords.chest.X + (15 * countX), coords.chest.Y + 8 + (23 * countY), 0xffffff, true).setScale(0.65);
-                    }
-
-
-                    //シュルカーボックスなら
-
-                    if (playerinv.getSlot(Slot).getItemId() === "minecraft:shulker_box") {
-
-
-                        //シュルカーのNBTから中に入ってるアイテムを取得
-                        const shulkerNBT = playerinv.getSlot(Slot).getNBT().get("BlockEntityTag").get("Items").asListHelper();
-                        //const shulkerNBT = playerinv.getSlot(Slot).getNBT().get("BlockEntityTag").get("Items").asListHelper();
-
-
-
-
-                        for (let count = 0; count < shulkerNBT.length(); count++) {
-                            const ItemNBTData = shulkerNBT.get(count).asCompoundHelper();
-
-                            const ItemCount = ItemNBTData.get("Count").asString().replace(/b/g, "");
-                            if (count <= 8) {
-                                Screen.addText(ItemCount, coords.shulker_left.X + (120 * Lines) + (15 * count) - 1, coords.shulker_left.Y + (shulkercount * 75) - 1, 0xffffff, false).setScale(0.6);//アイテムの個数追加
-                                Screen.addItem(coords.shulker_left.X + (120 * Lines) + (15 * count), coords.shulker_left.Y + (shulkercount * 75) + 5, ItemNBTData.get("id").asString());//アイテム追加
-                            } else if (count >= 9 && count <= 17) {
-                                Screen.addText(ItemCount, coords.shulker_left.X + (120 * Lines) + (15 * (count - 9)) - 1, coords.shulker_left.Y + (shulkercount * 75) - 1 + 24, 0xffffff, false).setScale(0.6);//アイテムの個数追加
-                                Screen.addItem(coords.shulker_left.X + (120 * Lines) + (15 * (count - 9)), coords.shulker_left.Y + (shulkercount * 75) + 5 + 24, ItemNBTData.get("id").asString());//アイテム追加
-                            } else {
-                                Screen.addText(ItemCount, coords.shulker_left.X + (120 * Lines) + (15 * (count - 18)) - 1, coords.shulker_left.Y + (shulkercount * 75) - 1 + 48, 0xffffff, false).setScale(0.6);//アイテムの個数追加
-                                Screen.addItem(coords.shulker_left.X + (120 * Lines) + (15 * (count - 18)), coords.shulker_left.Y + (shulkercount * 75) + 5 + 48, ItemNBTData.get("id").asString());//アイテム追加
-                            }
-                        }
-                        //枠描画
-                        //Screen.addLine(coords.shulker_left.X, coords.shulker_left.Y, coords.shulker_left.X + 120, shulker_left.Y, 0xffffff);
-                        if (shulkercount % 8 === 0) {
-                            Chat.log(shulkercount)
-                            Chat.log("Lines")
-                            Lines++
-                        }
-                        shulkercount++
-                    }
-                }
-            }
-        }
-
-        //コンテナ内のアイテムの変化時の処理
-        JsMacros.once("ClickSlot", JavaWrapper.methodToJava(() => {
-
-            //スクリーンのすべてのelementを取得し削除
-            for (const element of Screen.getElements().toArray()) {
-                Screen.removeElement(element)
-            }
-
-            //再描画
-            ItemPlot(coords);
-        }))
+//ここから文字サイズ位置等微調整用
+//描画の座標微調整用
+//描画の位置がずれていた場合に数値(マイナスプラス)を入れて修正してください たぶん修正しないとほぼ確実にずれます
+const coords = {
+    chest: {
+        X: -5,
+        Y: 10
+    },
+    shulker_left: {
+        X: 5,
+        Y: 5,
+    },
+    shulker_right: {
+        X: 700,
+        Y: 5
+    },
+    Itemcount: {
+        X: -2,
+        Y: -2
     }
-})
+}
+const ItemcountTextColor = 0xffffff;//16進数カラーコードで指定 カラーコード頭の#は0xに置き換えてください
+//ここまで
+
+//引数 (coords)
+function Container_Update(coords) {
+
+    //個々れへんの変数群絶対もっと効率化できると思う
+    const Inventory = Player.openInventory();//Inventory
+    const Screen = Hud.getOpenScreen();//IScreen
+    const ScreenName = Hud.getOpenScreenName();//ScreenName
+    const ScreenHight_100 = Screen.getHeight() / 100;
+    const ScreenWidth_100 = Screen.getWidth() / 100;
+    const ItemXdistance = Math.floor(ScreenWidth_100 * 2);
+    const ItemYdistance = Math.floor(ScreenHight_100 * 4);
+
+    let container_hight
+    if (ScreenName === "3 Row Chest" || ScreenName === "Shulker Box") {
+        container_hight = 3;
+    } else if (ScreenName === "6 Row Chest") {
+        container_hight = 6;
+    }
+
+    //アイテム描画
+    for (let countY = 0; countY < container_hight; countY++) {
+        for (let countX = 0; countX < 9; countX++) {
+            const SlotNumber = countX + countY * 9;
+            const ItemData = Inventory.getSlot(SlotNumber);
+
+            //アイテム配置用のXY座標
+            const ItemX = Math.floor(coords.chest.X + (Screen.getWidth() / 6 * 2.5) + ItemXdistance * countX);//画面の幅を÷6x2.5
+            const ItemY = Math.floor(coords.chest.Y + (ItemYdistance * countY))
+
+            //アイテム配置
+            Screen.addItem(ItemX, ItemY, ItemData.getItemId());
+
+            //アイテム数が1より上の時に数値を配置
+            if (ItemData.getCount() > 1) {
+                Screen.addText(ItemData.getCount().toString(), ItemX + coords.Itemcount.X, ItemY + coords.Itemcount.Y, ItemcountTextColor, false).setScale(0.65);
+            }
+
+
+            //シュルカーの中に入ってるアイテムを取得し表示する
+            //シュルカーボックスなら
+            if(ItemData.getItemId() === "minecraft:shulker_box"){
+
+                //シュルカーボックスのNBTを取得
+                const shulker_NBT = Inventory.getSlot(SlotNumber).getNBT().get("BlockEntityTag").get("Items").asListHelper()
+                Chat.log(shulker_NBT)
+            }
+        }
+    }
+}
+
+//エレメント消去
+function DeleteAllElement(){
+    for(const Element of Hud.getOpenScreen().getElements().toArray()){
+        Hud.getOpenScreen().removeElement(Element)
+    }
+}
+
+//Events
+const OpenContainer_Event = JsMacros.on("OpenContainer", JavaWrapper.methodToJava(() => {
+    Chat.log("opencontainer event");
+    DeleteAllElement()
+    Container_Update(coords);
+}))
+
+const ClickSlot_Event = JsMacros.on("ClickSlot", JavaWrapper.methodToJava(() => {
+    Chat.log("click slot event");
+    DeleteAllElement()
+    Container_Update(coords);
+}))
+
+//サービス終了時の処理
+event.stopListener = JavaWrapper.methodToJava(() => {
+    Chat.log("Event Stoppped")
+    JsMacros.off(OpenContainer_Event);
+    JsMacros.off(ClickSlot_Event)
+});
