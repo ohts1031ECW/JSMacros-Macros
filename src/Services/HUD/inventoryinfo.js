@@ -37,6 +37,7 @@ function Container_Update(coords) {
     const ScreenWidth_100 = Screen.getWidth() / 100;
     const ItemXdistance = Math.floor(ScreenWidth_100 * 2);
     const ItemYdistance = Math.floor(ScreenHight_100 * 4);
+    const Shulker_Line = Math.floor(Screen.getHeight() / 7);
 
     let container_hight
     if (ScreenName === "3 Row Chest" || ScreenName === "Shulker Box") {
@@ -69,57 +70,46 @@ function Container_Update(coords) {
             }
 
 
-            //チェストの中にあるシュルカーの数数え用
-            let Shulker_Count = 0;
+
             //シュルカーの中に入ってるアイテムを取得し表示する
             //シュルカーボックスなら
             if (ItemData.getItemId() === "minecraft:shulker_box") {
-                Shulker_Count++
 
                 //シュルカーボックスのNBTを取得
                 const shulker_NBT = Inventory.getSlot(SlotNumber).getNBT().get("BlockEntityTag").get("Items").asListHelper()
 
-                //シュルカーの数を7で割った余りが0にならない吐息
-                if (Shulker_Count % 7 !== 0) {
+                //チェストの中にあるシュルカーの数分繰り返す
+                for (let Shulker_Count = 0;Shulker_Count < shulker_NBT.length(); Shulker_Count++) {
+                    //シュルカーの数を7で割った余りが0にならない吐息
+                    if (Shulker_Count % 7 !== 0) {
 
-                    //チェストの中のアイテムと同様に
-                    for (let shulker_Y = 0; shulker_Y < 3; shulker_Y++) {
-                        for (let shulker_X = 0; shulker_X < 9; shulker_X++) {
-                            const Shulker_Slot_Number = shulker_X + shulker_Y * 9;//スロット番号生成
+                        //チェストの中のアイテムと同様に
+                        for (let shulker_Y = 0; shulker_Y < 3; shulker_Y++) {
+                            for (let shulker_X = 0; shulker_X < 9; shulker_X++) {
+                                const Shulker_Slot_Number = shulker_X + shulker_Y * 9;//スロット番号生成
 
-                            const Shulker_Item_Data = shulker_NBT.get(Shulker_Slot_Number).asCompoundHelper();
+                                const Shulker_Item_Data = shulker_NBT.get(Shulker_Slot_Number).asCompoundHelper();
 
-                            const Shulker_Item_Count = Shulker_Item_Data.get("Count").asString().replace(/b/g, "");
-                            const Shulker_Item_Id = Shulker_Item_Data.get("id").asString();
+                                const Shulker_Item_Count = Shulker_Item_Data.get("Count").asString().replace(/b/g, "");
+                                const Shulker_Item_Id = Shulker_Item_Data.get("id").asString();
 
-                            const Shulker_Item_X = coords.shulker_left.X + ItemXdistance * shulker_X;
-                            const Shulker_Item_Y = coords.shulker_left.Y + ItemYdistance * shulker_Y;
+                                const Shulker_Item_X = coords.shulker_left.X + ItemXdistance * shulker_X;
+                                const Shulker_Item_Y = coords.shulker_left.Y + ItemYdistance * shulker_Y + Shulker_Line * (Shulker_Count - 1);
 
-                            //アイテム描画
-                            Screen.addItem(Shulker_Item_X, Shulker_Item_Y, Shulker_Item_Id);
+                                //アイテム描画
+                                Screen.addItem(Shulker_Item_X, Shulker_Item_Y, Shulker_Item_Id);
 
-                            //アイテムの数が1こより多ければアイテムの個数を表示
-                            if (Shulker_Item_Count > 1) {
-                                Screen.addText(Shulker_Item_Count, coords.Itemcount.X + Shulker_Item_X, coords.Itemcount.Y + Shulker_Item_Y, ItemcountTextColor, false).setScale(ItemCountScale);
+                                //アイテムの数が1こより多ければアイテムの個数を表示
+                                if (Shulker_Item_Count > 1) {
+                                    Screen.addText(Shulker_Item_Count, coords.Itemcount.X + Shulker_Item_X, coords.Itemcount.Y + Shulker_Item_Y, ItemcountTextColor, false).setScale(ItemCountScale);
+                                }
                             }
                         }
+                    } else {
+
+
                     }
-                } else {
-
-                    
                 }
-
-                //shulkercount÷6の余りが0のとき, (0~6で7)
-                //if(shulker_count % 6 === 0){
-
-
-                //それ以外(通常時)
-                //} else {
-
-                //Chat.log(`shulkercount /3 :${shulker_NBT.length() / 3}`)
-                //}
-
-
             }
         }
     }
@@ -128,7 +118,7 @@ function Container_Update(coords) {
 //エレメント消去
 function DeleteAllElement() {
     for (const Element of Hud.getOpenScreen().getElements().toArray()) {
-        Hud.getOpenScreen().removeElement(Element)
+        Hud.getOpenScreen().removeElement(Element);
     }
 }
 
