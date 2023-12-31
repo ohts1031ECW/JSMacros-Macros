@@ -4,5 +4,6 @@ const Event = JsMacros.on("OpenContainer",JavaWrapper.methodToJava(()=>{
 }));
 
 event.stopListener = JavaWrapper.methodToJava(() => {
+    Chat.log("Event Stoppped")
     JsMacros.off(Event);
 });

@@ -1,4 +1,11 @@
 //@ts-nocheck
+
+JsMacros.on("OpenContainer",JavaWrapper.methodToJava(()=>{
+    Chat.log("opencontainer")
+    Hud.getOpenScreen().addLine(0,0,Hud.getOpenScreen().getWidth(),Hud.getOpenScreen().getHeight(),0x000000)
+}))
+
+/*
 const scanner = World.getWorldScanner()
 .withBlockFilter("getId").contains("chest")
 .build()
