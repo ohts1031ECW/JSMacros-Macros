@@ -1,8 +1,16 @@
 //@ts-nocheck
 
-JsMacros.on("OpenContainer",JavaWrapper.methodToJava(()=>{
+JsMacros.on("OpenContainer", JavaWrapper.methodToJava(() => {
     Chat.log("opencontainer")
-    Hud.getOpenScreen().addLine(0,0,Hud.getOpenScreen().getWidth(),Hud.getOpenScreen().getHeight(),0x000000)
+    const Inventory = Player.openInventory()
+    let shulker_box_name = [];
+    for(let count = 0; count<27;count++){
+        shulker_box_name.push(Inventory.getSlot(count).getName().getString())
+        Chat.log(Inventory.getSlot(count).getDefaultName())
+    }
+    
+    Chat.log(shulker_box_name);
+    Utils.copyToClipboard(shulker_box_name.toString())
 }))
 
 /*
