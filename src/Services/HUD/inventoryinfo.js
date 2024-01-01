@@ -22,8 +22,18 @@ const coords = {
         Y: -2
     },
     Shulker_Name: {
-        X: 10,
-        Y: 10
+        X: 0,
+        Y: 0
+    },
+    page: {
+        left: {
+            X: 0,
+            Y: 0
+        },
+        right: {
+            X: 0,
+            Y: 0
+        }
     }
 }
 const ItemcountTextColor = 0xffffff;//16進数カラーコードで指定 カラーコード頭の#は0xに置き換えてください デフォルトは0xffffff の白です
@@ -31,9 +41,12 @@ const Shulker_Box_Name_Text_color = 0xffffff;//↑と同じく
 const ItemCountScale = 0.65 //アイテム個数表示の文字の大きさを指定します デフォルトは0.65です
 const Shulker_Box_Color_Template = {
     default: 0x800080,
+    White: 0xffffff,
+
 }
 
 //ここまで
+
 
 //引数 (coords)
 function Container_Update(coords) {
@@ -56,6 +69,10 @@ function Container_Update(coords) {
         container_hight = 6;
     }
 
+
+    //ページ
+    
+    let Shulker_box_count = 0;
     let Shulker_Count = 0;
     let Shulker_X_Line = 0;
     let right_temp = 0;
@@ -86,7 +103,7 @@ function Container_Update(coords) {
             //シュルカーボックスなら
             if (/shulker_box/.test(ItemData.getItemId())) {
                 Shulker_Count++;
-
+                Shulker_box_count++;
                 //シュルカーボックスの色をアイテムidから取得
                 const Shulker_Box_Item_Id = ItemData.getItemId().toString();
                 let Shulker_Box_Color;
@@ -130,11 +147,6 @@ function Container_Update(coords) {
                         if (Shulker_Item_Count > 1) {
                             Screen.addText(Shulker_Item_Count, coords.Itemcount.X + Shulker_Item_X, coords.Itemcount.Y + Shulker_Item_Y, ItemcountTextColor, false).setScale(ItemCountScale);
                         }
-
-                        //シュルカーボックスの名前(名前がついてれば)
-
-                        //枠描画
-                        //Screen.addLine(shulker_X,shulker_Y,).setWidth(10.0)
                     }
                 }
 
@@ -144,18 +156,25 @@ function Container_Update(coords) {
                 if (Shulker_Box_name !== Shulker_Box_Default_Name) {
                     Screen.addText(
                         Shulker_Box_name,
-                        Shulker_X_Line_base * (Shulker_X_Line + right_temp),
-                        Math.floor(Shulker_Y_Line * (Shulker_Count - 1) + Shulker_Y_Line-ScreenHight_100*2),
+                        Shulker_X_Line_base * (Shulker_X_Line + right_temp) + coords.Shulker_Name.X,
+                        Math.floor(Shulker_Y_Line * (Shulker_Count - 1) + Shulker_Y_Line - ScreenHight_100 * 2) + coords.Shulker_Name.Y,
                         Shulker_Box_Name_Text_color,
                         false
-                        )
+                    )
                 }
+
+                //シュルカーボックスごとにシュルカーボックスの色の枠
+                //開発中
 
                 //シュルカーの数を7で割った余りが0でありshulker_countが0でないとき
                 if (Shulker_Count % 7 === 0 && Shulker_Count !== 0) {
                     Shulker_X_Line++
                     Shulker_Count = 0;
                 }
+            }
+
+            if(Shulker_box_count >26){
+                Chat.log("LC")
             }
         }
     }

@@ -1,16 +1,46 @@
 //@ts-nocheck
+/*
+const shulkerBoxes = [
+  "minecraft:white_shulker_box",
+  "minecraft:light_gray_shulker_box",
+  "minecraft:gray_shulker_box",
+  "minecraft:black_shulker_box",
+  "minecraft:brown_shulker_box",
+  "minecraft:red_shulker_box",
+  "minecraft:orange_shulker_box",
+  "minecraft:yellow_shulker_box",
+  "minecraft:lime_shulker_box",
+  "minecraft:green_shulker_box",
+  "minecraft:cyan_shulker_box",
+  "minecraft:light_blue_shulker_box",
+  "minecraft:blue_shulker_box",
+  "minecraft:purple_shulker_box",
+  "minecraft:magenta_shulker_box",
+  "minecraft:pink_shulker_box"
+];
+
+function SplitFromEnd(stringinput,number){
+  //文字の長さ-後ろからの文字数で前からの文字数を求める
+  const start = stringinput.length -number;
+
+  const result = stringinput.substring(0,start);
+
+  return result;
+
+}
+
+for(const box of shulkerBoxes){
+  Chat.log(`${ SplitFromEnd(box,12).split(":")[1]}`)
+}
+*/
+
 
 JsMacros.on("OpenContainer", JavaWrapper.methodToJava(() => {
     Chat.log("opencontainer")
-    const Inventory = Player.openInventory()
-    let shulker_box_name = [];
-    for(let count = 0; count<27;count++){
-        shulker_box_name.push(Inventory.getSlot(count).getName().getString())
-        Chat.log(Inventory.getSlot(count).getDefaultName())
-    }
-    
-    Chat.log(shulker_box_name);
-    Utils.copyToClipboard(shulker_box_name.toString())
+    const Screen = Hud.getOpenScreen()
+    Screen.addButton(100,100,50,50,"test",JavaWrapper.methodToJava((click)=>{
+      Chat.log(`click: ${click}`)
+  }))
 }))
 
 /*
