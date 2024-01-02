@@ -1,4 +1,63 @@
 //@ts-nocheck
+function ButtonClick(){
+  const Screen = Hud.getOpenScreen();
+
+  Screen.addText("TEEST",100,100,0xffffff,true).setScale(2.0).setZIndex(0)
+  Screen.addButton(Screen.getWidth()-50,Screen.getHeight()-50,25,25,10,">",JavaWrapper.methodToJava((click)=>{
+
+    Chat.log(click)
+    
+    //エレメント取得
+    const Elements = Screen.getElements().toArray();
+
+    //エレメント前部に対してのループ
+    for(const ELement of Elements){
+      Chat.log(`Element: ${ELement.getZIndex()}`)
+
+      //エレメントのzindexが0であれば
+      if(ELement.getZIndex() === 0){
+
+        //エレメントを削除
+        Screen.removeElement(ELement);
+
+        //再描画
+        Screen.addText("UPDATED TEST",100,100,0xffffff,true).setScale(2.0).setZIndex(1)
+      }
+    }
+
+  }))
+
+  Screen.addButton(Screen.getWidth()-100,Screen.getHeight()-50,25,25,10,"<",JavaWrapper.methodToJava((click)=>{
+
+    Chat.log(click)
+    
+        //エレメント取得
+        const Elements = Screen.getElements().toArray();
+
+        //エレメント前部に対してのループ
+        for(const ELement of Elements){
+          Chat.log(`Element: ${ELement.getZIndex()}`)
+    
+          //エレメントのzindexが0であれば
+          if(ELement.getZIndex() === 1){
+    
+            //エレメントを削除
+            Screen.removeElement(ELement);
+    
+            //再描画
+            Screen.addText("TEEST",100,100,0xffffff,true).setScale(2.0).setZIndex(0)
+          }
+        }
+        
+  }))
+}
+
+
+JsMacros.on("OpenContainer", JavaWrapper.methodToJava(() => {
+  Chat.log("opencontainer")
+  ButtonClick()
+
+}))
 /*
 const shulkerBoxes = [
   "minecraft:white_shulker_box",
@@ -33,15 +92,6 @@ for(const box of shulkerBoxes){
   Chat.log(`${ SplitFromEnd(box,12).split(":")[1]}`)
 }
 */
-
-
-JsMacros.on("OpenContainer", JavaWrapper.methodToJava(() => {
-    Chat.log("opencontainer")
-    const Screen = Hud.getOpenScreen()
-    Screen.addButton(100,100,50,50,"test",JavaWrapper.methodToJava((click)=>{
-      Chat.log(`click: ${click}`)
-  }))
-}))
 
 /*
 const scanner = World.getWorldScanner()
