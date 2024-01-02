@@ -47,9 +47,13 @@ const Shulker_Box_Color_Template = {
 
 //ここまで
 
+const options_Def = {
+    countY_Default: 0,
+    Zindex: 0
+}
 
 //引数 (coords)
-function Container_Update(coords) {
+function Container_Update(coords, options = options_Def) {
 
     //個々れへんの変数群絶対もっと効率化できると思う
     const Inventory = Player.openInventory();//Inventory
@@ -69,15 +73,14 @@ function Container_Update(coords) {
         container_hight = 6;
     }
 
-
     //ページ
-    
+
     let Shulker_box_count = 0;
     let Shulker_Count = 0;
     let Shulker_X_Line = 0;
     let right_temp = 0;
     //アイテム描画
-    for (let countY = 0; countY < container_hight; countY++) {
+    for (let countY = options.countY_Default; countY < container_hight; countY++) {
         for (let countX = 0; countX < 9; countX++) {
             /*
             countX チェストの行で0~8の9スロット
@@ -92,11 +95,11 @@ function Container_Update(coords) {
             const ItemY = Math.floor(coords.chest.Y + (ItemYdistance * countY))
 
             //アイテム配置
-            Screen.addItem(ItemX, ItemY, ItemData.getItemId());
+            Screen.addItem(ItemX, ItemY, ItemData.getItemId()).setZIndex(options.Zindex);
 
             //アイテム数が1より上の時に数値を配置
             if (ItemData.getCount() > 1) {
-                Screen.addText(ItemData.getCount().toString(), ItemX + coords.Itemcount.X, ItemY + coords.Itemcount.Y, ItemcountTextColor, false).setScale(ItemCountScale);
+                Screen.addText(ItemData.getCount().toString(), ItemX + coords.Itemcount.X, ItemY + coords.Itemcount.Y, ItemcountTextColor, false).setScale(ItemCountScale).setZIndex(options.Zindex);
             }
 
             //シュルカーの中に入ってるアイテムを取得し表示する
@@ -141,11 +144,11 @@ function Container_Update(coords) {
                         const Shulker_Item_Y = coords.shulker_left.Y + ItemYdistance * shulker_Y + Shulker_Y_Line * (Shulker_Count - 1);
 
                         //アイテム描画
-                        Screen.addItem(Shulker_Item_X, Shulker_Item_Y, Shulker_Item_Id);
+                        Screen.addItem(Shulker_Item_X, Shulker_Item_Y, Shulker_Item_Id).setZIndex(options.Zindex);
 
                         //アイテムの数が1こより多ければアイテムの個数を表示
                         if (Shulker_Item_Count > 1) {
-                            Screen.addText(Shulker_Item_Count, coords.Itemcount.X + Shulker_Item_X, coords.Itemcount.Y + Shulker_Item_Y, ItemcountTextColor, false).setScale(ItemCountScale);
+                            Screen.addText(Shulker_Item_Count, coords.Itemcount.X + Shulker_Item_X, coords.Itemcount.Y + Shulker_Item_Y, ItemcountTextColor, false).setScale(ItemCountScale).setZIndex(options.Zindex);
                         }
                     }
                 }
@@ -160,11 +163,15 @@ function Container_Update(coords) {
                         Math.floor(Shulker_Y_Line * (Shulker_Count - 1) + Shulker_Y_Line - ScreenHight_100 * 2) + coords.Shulker_Name.Y,
                         Shulker_Box_Name_Text_color,
                         false
-                    )
+                    ).setZIndex(options.Zindex)
                 }
-
                 //シュルカーボックスごとにシュルカーボックスの色の枠
                 //開発中
+
+                //一番右の列がページボタンと被るため別処理
+                if (Shulker_X_Line === 3 && container_hight === 6 && Shulker_Count % 6 === 0) {
+                    Shulker_Count = 0
+                }
 
                 //シュルカーの数を7で割った余りが0でありshulker_countが0でないとき
                 if (Shulker_Count % 7 === 0 && Shulker_Count !== 0) {
@@ -172,18 +179,66 @@ function Container_Update(coords) {
                     Shulker_Count = 0;
                 }
             }
-
-            if(Shulker_box_count >26){
-                Chat.log("LC")
-            }
         }
     }
 }
 
+//ページネーションボタンクリック時の処理関数
+function ButtonClick() {
+    const Screen = Hud.getOpenScreen();
+
+    Screen.addButton(Screen.getWidth() - 50, Screen.getHeight() - 50, 25, 25, 10, "+", JavaWrapper.methodToJava((click) => {
+
+        Chat.log(click)
+
+        //エレメント取得
+        const Elements = Screen.getElements().toArray();
+
+        //ページ移動エレメント以外を削除
+        for (const Element of Elements) {
+            if (Element.getZIndex() !== 10) {
+                Screen.removeElement(Element)
+            }
+        }
+        
+        //更新
+        Container_Update(coords,{countY_Default:3,Zindex:1})
+    }))
+
+    Screen.addButton(Screen.getWidth() - 100, Screen.getHeight() - 50, 25, 25, 10, "-", JavaWrapper.methodToJava((click) => {
+        Chat.log(click)
+
+        //エレメント取得
+        const Elements = Screen.getElements().toArray();
+
+
+
+        //ページ移動エレメント以外を削除
+        for (const Element of Elements) {
+            if (Element.getZIndex() !== 10) {
+                Screen.removeElement(Element)
+            }
+        }
+
+        //更新
+        Container_Update(coords,{countY_Default:0,Zindex:0})
+    }))
+}
+
+
+function GetShulkerBoxCount(slot) {
+    let shulkerboxcount = 0;
+    for (let count = 0; count < slot; count++) {
+        if (Player.openInventory().getSlot(count).getNBT !== null) {
+            shulkerboxcount++
+        }
+    }
+    return shulkerboxcount;
+}
 //エレメント消去
 function DeleteAllElement() {
     for (const Element of Hud.getOpenScreen().getElements().toArray()) {
-        Hud.getOpenScreen().removeElement(Element);
+        Hud.getOpenScreen().removeElement(Element)
     }
 }
 
@@ -192,12 +247,15 @@ const OpenContainer_Event = JsMacros.on("OpenContainer", JavaWrapper.methodToJav
     Chat.log("opencontainer event");
     DeleteAllElement()
     Container_Update(coords);
+    ButtonClick()
+
 }))
 
 const ClickSlot_Event = JsMacros.on("ClickSlot", JavaWrapper.methodToJava(() => {
     Chat.log("click slot event");
     DeleteAllElement()
     Container_Update(coords);
+    ButtonClick()
 }))
 
 //サービス終了時の処理

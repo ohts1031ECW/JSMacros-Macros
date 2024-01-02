@@ -56,6 +56,7 @@ function ButtonClick(){
 JsMacros.on("OpenContainer", JavaWrapper.methodToJava(() => {
   Chat.log("opencontainer")
   ButtonClick()
+  Chat.log(Hud.getOpenScreen().getButtonWidgets())
 
 }))
 /*
