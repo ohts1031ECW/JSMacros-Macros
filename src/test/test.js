@@ -59,6 +59,7 @@ JsMacros.on("OpenContainer", JavaWrapper.methodToJava(() => {
   Chat.log(Hud.getOpenScreen().getButtonWidgets())
 
 }))
+
 /*
 const shulkerBoxes = [
   "minecraft:white_shulker_box",
