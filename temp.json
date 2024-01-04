@@ -1,0 +1,59 @@
+NBTElementHelper: {
+    {Items: [
+            {Count: 64b,Slot: 0b,id: "minecraft:oak_log"
+            },
+            {Count: 64b,Slot: 1b,id: "minecraft:oak_wood"
+            },
+            {Count: 64b,Slot: 2b,id: "minecraft:stripped_oak_log"
+            },
+            {Count: 64b,Slot: 3b,id: "minecraft:stripped_oak_wood"
+            },
+            {Count: 64b,Slot: 4b,id: "minecraft:oak_planks"
+            },
+            {Count: 64b,Slot: 5b,id: "minecraft:oak_stairs"
+            },
+            {Count: 64b,Slot: 6b,id: "minecraft:oak_slab"
+            },
+            {Count: 64b,Slot: 7b,id: "minecraft:oak_fence"
+            },
+            {Count: 64b,Slot: 8b,id: "minecraft:oak_fence_gate"
+            },
+            {Count: 64b,Slot: 9b,id: "minecraft:oak_door"
+            },
+            {Count: 64b,Slot: 10b,id: "minecraft:oak_trapdoor"
+            },
+            {Count: 64b,Slot: 11b,id: "minecraft:oak_pressure_plate"
+            },
+            {Count: 64b,Slot: 12b,id: "minecraft:oak_button"
+            },
+            {Count: 64b,Slot: 13b,id: "minecraft:spruce_log"
+            },
+            {Count: 64b,Slot: 14b,id: "minecraft:spruce_wood"
+            },
+            {Count: 64b,Slot: 15b,id: "minecraft:stripped_spruce_log"
+            },
+            {Count: 64b,Slot: 16b,id: "minecraft:stripped_spruce_wood"
+            },
+            {Count: 64b,Slot: 17b,id: "minecraft:spruce_planks"
+            },
+            {Count: 64b,Slot: 18b,id: "minecraft:spruce_stairs"
+            },
+            {Count: 64b,Slot: 19b,id: "minecraft:spruce_slab"
+            },
+            {Count: 64b,Slot: 20b,id: "minecraft:spruce_fence"
+            },
+            {Count: 64b,Slot: 21b,id: "minecraft:spruce_fence_gate"
+            },
+            {Count: 64b,Slot: 22b,id: "minecraft:spruce_door"
+            },
+            {Count: 64b,Slot: 23b,id: "minecraft:spruce_trapdoor"
+            },
+            {Count: 64b,Slot: 24b,id: "minecraft:spruce_pressure_plate"
+            },
+            {Count: 64b,Slot: 25b,id: "minecraft:spruce_button"
+            },
+            {Count: 64b,Slot: 26b,id: "minecraft:birch_log"
+            }
+        ],id: "minecraft:shulker_box"
+    }
+}
