@@ -28,9 +28,9 @@ const coords = {
         Height: 25
     }
 }
-const Zindex = {
+const Zindexconst = {
     Button: 100,
-    Page: [0,1],
+    Page: [0, 1],
     Inventory: 99
 }
 const ItemcountTextColor = 0xffffff;//16進数カラーコードで指定 カラーコード頭の#は0xに置き換えてください デフォルトは0xffffff の白です
@@ -44,7 +44,7 @@ const Shulker_Box_Color_Template = {
 }
 
 //ここまで
-
+const debug = true
 
 
 //引数 (coords)
@@ -105,6 +105,7 @@ function GetShulkerItem(min, max, coords, Zindex) {
     let Shulker_X_Line = 0;
     let tmp = 0;
     let shulkercount = 0;
+    if(Hud.getOpenScreenName() !== "3 Row Chest"  || Hud.getOpenScreenName() !== "6 Row Chest") return;
     for (let count = min; count < max; count++) {
 
         //シュルカーボックスの場合処理
@@ -197,17 +198,23 @@ function PageButtonPress() {
         100,
         "+",
         JavaWrapper.methodToJava((click) => {
-            Chat.log(click);
+            if(debug){
+                Chat.log(click);
+            }
+            
+
 
             //ボタン(zindex 100)以外のエレメントを削除
             for (const Element of Screen.getElements().toArray()) {
-                if (Element.getZIndex() <99) {
+                if (Element.getZIndex() < 99) {
                     Screen.removeElement(Element);
                 }
             }
 
             //シュルカーの中のアイテムの表示を再描画
             GetShulkerItem(27, 54, coords, 1);
+
+
         }))
 
     Screen.addButton(
@@ -218,7 +225,11 @@ function PageButtonPress() {
         100,
         "-",
         JavaWrapper.methodToJava((click) => {
-            Chat.log(click);
+            if(debug){
+                Chat.log(click);
+            }
+
+
 
             //ボタン(zindex 100)以外のエレメントを削除
             for (const Element of Screen.getElements().toArray()) {
@@ -229,8 +240,10 @@ function PageButtonPress() {
 
             //シュルカーの中のアイテムの表示を再描画
             GetShulkerItem(0, 27, coords, 0);
+
+
         }))
-    }
+}
 
 //エレメント消去
 function DeleteAllElement() {
@@ -241,21 +254,30 @@ function DeleteAllElement() {
 
 //Events
 const OpenContainer_Event = JsMacros.on("OpenContainer", JavaWrapper.methodToJava(() => {
-    Chat.log("opencontainer event");
+    if(debug) Chat.log("opencontainer event");
+
     DeleteAllElement();
     PageButtonPress();
-    Container_Update(coords, Zindex.Inventory);
+    Container_Update(coords, Zindexconst.Inventory);
     GetShulkerItem(0, 27, coords, 0);
-    
+
 
 }))
 
 const ClickSlot_Event = JsMacros.on("ClickSlot", JavaWrapper.methodToJava(() => {
-    Chat.log("click slot event");
+    if(debug) Chat.log("click slot event");
+
+    const Zindex = Hud.getOpenScreen().getElements().toArray()[100].getZIndex();
     DeleteAllElement();
-    Container_Update(coords, Zindex.Inventory);
-    GetShulkerItem(0, 27, coords, 0);
+    Container_Update(coords, Zindexconst.Inventory);
+    if(Zindex === 1){
+        GetShulkerItem(27,54, coords, 1);
+    } else {
+        GetShulkerItem(0,27, coords, 0);
+    }
+    
     PageButtonPress();
+    
 }))
 
 //サービス終了時の処理
