@@ -3,7 +3,7 @@ Chat.log("started craft fireworks");
 
 //minecraft tick 1second = 20tick
 const delay = 2;
-const resultpick_delay = 7; //result pick delay  minimum=7
+const resultpick_delay = 10; //result pick delay  minimum=7
 
 const inventory = Player.openInventory();
 inventory.openGui();

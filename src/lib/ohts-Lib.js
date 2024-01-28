@@ -1,3 +1,6 @@
+const library = {
+    version: "1.0.1",
+}
 
 const defcolor = {
     script: { bracket: 0x7, name: 0x5 },
@@ -59,4 +62,5 @@ module.exports = {
     ToggleScript,
     getTargetedBlock,
     GetBlockState,
+    library,
 }
