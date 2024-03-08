@@ -1,0 +1,1 @@
+Chat.log(World.getChunk(Player.getPlayer().getChunkPos().getX(),0))
