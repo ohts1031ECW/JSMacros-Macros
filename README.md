@@ -1,3 +1,4 @@
 # JSMacros Scripts
 
-このリポジトリはohts1031_ECWが主に2b2tで使用するために作ったスクリプトを集めたものです。
+JSMacros macro集
+ v1.9.2で動作確認

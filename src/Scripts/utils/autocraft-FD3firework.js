@@ -37,34 +37,10 @@ for(const paper_index of paper){
         inventory.click(4);
         
         //result lagging wait
-        Client.waitTick(resultpick_delay)
-        //craft result put out 
-        const FlightDuration =inventory.getSlot(0).getNBT().get("Fireworks").asString("Flight");
-        Chat.log(`FD: ${FlightDuration}`);
+        Client.waitTick(resultpick_delay);
+        inventory.quick(0);
+        Client.waitTick(resultpick_delay);
         
-        if(FlightDuration !== "3b"){
-            //if not FD3 skipp
-            Chat.log("not FD3 !!!!!!");
-            let freecraftslot;
-            for(let slotcount = 1;slotcount<=4;slotcount++){
-      
-                //if no item in slot select slot
-                if(!inventory.getSlot(slotcount)){
-                    freecraftslot = slotcount;
-                }
-            }
-            
-            inventory.click(freecraftslot);
-            //Client.waitTick(resultpick_delay);
-            inventory.quick(0)
-            
-        } else {
-            
-            inventory.quick(0);
-            Client.waitTick(resultpick_delay)
-        }
-        
-
     } else {
         Chat.log("Not enoght gunpowders")
         break;
